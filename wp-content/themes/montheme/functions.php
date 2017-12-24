@@ -7,7 +7,7 @@ define('VERSION', '1.0.0');
 // =======================CHARGEMENT DES STYLES=============================
 // =========================================================================
 function ff_load_styles () {
-    wp_enqueue_style('bootstrap-css', get_template_directory_uri() . '/css/bootstrap.min.css', array(), VERSION, 'all');
+    wp_enqueue_style('bootstrap-css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', array(), VERSION, 'all');
     wp_enqueue_style('style', get_template_directory_uri() . '/css/style.css', array('bootstrap-css'), VERSION, 'all');
 } // fin ff_load_styles ()
 // charge les styles dans les pages de wordpress
@@ -19,7 +19,7 @@ add_action('wp_enqueue_scripts', 'ff_load_styles');
 // =======================CHARGEMENT DES SCRIPTS============================
 // =========================================================================
 function ff_load_scripts() {
-    wp_enqueue_script('bootstrap-js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js', array('jquery'), VERSION, true);
+    wp_enqueue_script('bootstrap-js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array('jquery'), VERSION, true);
     wp_enqueue_script('main', get_template_directory_uri() . '/js/main.js', array('jquery', 'bootstrap-js'), VERSION, true);
 } // fin ff_load_scripts
 // charge les scripts dans les pages de wordpress
@@ -37,6 +37,8 @@ function ff_setup () {
     add_theme_support('title-tag');
     // ajoute l'ajout de menu (possibilité d'ajouter plusieurs menus (secondary => secondaire))
     register_nav_menus(['primary' => 'principal']);
+    // crée format image slider
+    add_image_size( 'ff_slider', 1140, 420, true );
 
     function my_images_sizes ($sizes) {
         $addsizes = [
@@ -105,7 +107,7 @@ function ff_setup () {
             // Utiliser pour la zone de sidebar dans le footer
             'id' => 'widgetized-footer',
             'description' => 'widget ajouté dans le footer 4 max',
-            'before_widget' => '<div id="%1$s" class="col-xs-3 %2$s"><div class="inside-widget">',
+            'before_widget' => '<div id="%1$s" class="col-xs-12 col-sm-6 col-md-3 %2$s"><div class="inside-widget">',
             'after_widget' => '</div></div>',
             'before_title' => '<h2 class="h3 text-center">',
             'after_title' => '</h2>'
@@ -161,3 +163,99 @@ function ff_admin_init () {
 } // fin ff_admin_init
 
 add_action('admin_init', 'ff_admin_init');
+
+// Ajoute la class img-responsive à toutes les images
+function add_img_class($class)
+{
+    $class .= ' img-responsive'; // bien mettre un espace devant la chaine de caractères
+    return $class;
+}
+add_filter('get_image_tag_class', 'add_img_class');
+
+
+// =========================================================================
+// ==========================CUSTOM POST TYPE===============================
+// =========================================================================
+function ff_slider_init()
+{
+
+    $labels = array(
+        'name' => 'Image slider',
+        'singular_name' => 'Image accueil',
+        'menu_name' => 'Slider',
+        'name_admin_bar' => __('Post Type', 'text_domain'),
+        'archives' => __('Item Archives', 'text_domain'),
+        'attributes' => __('Item Attributes', 'text_domain'),
+        'parent_item_colon' => __('Parent Item:', 'text_domain'),
+        'add_new_item' => 'Ajouter une image',
+        'add_new' => 'Ajouter une image',
+        'new_item' => __('New Item', 'text_domain'),
+        'edit_item' => __('Edit Item', 'text_domain'),
+        'update_item' => __('Update Item', 'text_domain'),
+        'view_item' => __('View Item', 'text_domain'),
+        'view_items' => __('View Items', 'text_domain'),
+        'search_items' => __('Search Item', 'text_domain'),
+        'not_found' => __('Not found', 'text_domain'),
+        'not_found_in_trash' => __('Not found in Trash', 'text_domain'),
+        'featured_image' => __('Featured Image', 'text_domain'),
+        'set_featured_image' => __('Set featured image', 'text_domain'),
+        'remove_featured_image' => __('Remove featured image', 'text_domain'),
+        'use_featured_image' => __('Use as featured image', 'text_domain'),
+        'insert_into_item' => __('Insert into item', 'text_domain'),
+        'uploaded_to_this_item' => __('Uploaded to this item', 'text_domain'),
+        'items_list' => __('Items list', 'text_domain'),
+        'items_list_navigation' => __('Items list navigation', 'text_domain'),
+        'filter_items_list' => __('Filter items list', 'text_domain'),
+    );
+    $args = array(
+        'label' => __('Post Type', 'text_domain'),
+        'description' => __('Post Type Description', 'text_domain'),
+        'labels' => $labels,
+        'supports' => ['title', 'editor', 'page-attributes', 'thumbnail'],
+        // 'taxonomies' => array('category', 'post_tag'),
+        'menu_icon' => get_stylesheet_directory() . '/assets/img/slider.png',
+        'hierarchical' => false,
+        'public' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_position' => 20,
+        'show_in_admin_bar' => true,
+        'show_in_nav_menus' => true,
+        'can_export' => true,
+        'has_archive' => true,
+        'exclude_from_search' => true,
+        'publicly_queryable' => false,
+        'capability_type' => 'page',
+    );
+    register_post_type('ff_slider', $args);
+
+}
+add_action('init', 'ff_slider_init', 0); /* Ajoute un espace slider à l'interface wp */
+
+/* Ajout de deux colonnes dans le custom post type slider */
+add_filter( 'manage_edit-ff_slider_columns', 'ff_col_change'); // change le nom des colonnes
+function ff_col_change ($columns) {
+    $columns['ff_slider_image_order'] = "ordre";
+    $columns['ff_slider_image'] = 'image affiché';
+    return $columns;
+}
+add_action( 'manage_ff_slider_posts_custom_column', 'ff_content_show', 10, 2);
+function ff_content_show($column, $post_id) {
+    global $post;
+    if ($column == 'ff_slider_image') {
+        echo the_post_thumbnail([100,100]);
+    }
+    if ($column == 'ff_slider_image_order') {
+        echo $post->menu_order;
+    }
+}
+
+// trie les élements par leurs ordre dans le Custom post type slider
+function ff_change_slides_order ($query) {
+    global $post_type, $pagenow;
+    if ($pagenow == 'edit.php' && $post_type == 'ff_slider') {
+        $query->query_vars['orderby'] = 'menu_order';
+        $query->query_vars['order'] = 'asc';
+    }
+}
+add_action( 'pre_get_posts', 'ff_change_slides_order');

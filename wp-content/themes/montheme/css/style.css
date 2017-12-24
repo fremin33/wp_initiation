@@ -1,12 +1,37 @@
 footer {
-    background: #CDDDC4;
-    margin-top: 30px;
-    margin-bottom: 30px;
+  background: #CDDDC4;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 footer .col-xs-3 .inside-widget {
-    background: #BAC6BC;
-    min-height: 250px;
+  background: #BAC6BC;
+  min-height: 250px;
 }
 table#wp-calendar {
-    width: 100%;
+  width: 100%;
+}
+.aligncenter {
+  margin: 0 auto;
+  display: block;
+}
+.attachment-thumbnail {
+  max-width: 100%;
+  height: auto;
+}
+.page-numbers {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 0 2px 0 0;
+  border: 1px solid #eee;
+  line-height: 1;
+  text-decoration: none;
+  border-radius: 2px;
+  font-weight: 600;
+}
+.page-numbers.current,
+a.page-numbers:hover {
+  background: #f9f9f9;
+}
+.mgb {
+  margin-bottom: 30px;
 }

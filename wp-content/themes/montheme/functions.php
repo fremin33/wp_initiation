@@ -39,6 +39,10 @@ function ff_setup () {
     register_nav_menus(['primary' => 'principal']);
     // crée format image slider
     add_image_size( 'ff_slider', 1140, 420, true );
+    add_image_size( 'ff_front-page', 50, 50, true );
+
+
+
 
     function my_images_sizes ($sizes) {
         $addsizes = [
@@ -235,8 +239,8 @@ add_action('init', 'ff_slider_init', 0); /* Ajoute un espace slider à l'interfa
 /* Ajout de deux colonnes dans le custom post type slider */
 add_filter( 'manage_edit-ff_slider_columns', 'ff_col_change'); // change le nom des colonnes
 function ff_col_change ($columns) {
-    $columns['ff_slider_image_order'] = "ordre";
-    $columns['ff_slider_image'] = 'image affiché';
+    $columns['ff_slider_image_order'] = "Order";
+    $columns['ff_slider_image'] = 'Image affiché';
     return $columns;
 }
 add_action( 'manage_ff_slider_posts_custom_column', 'ff_content_show', 10, 2);
@@ -251,11 +255,18 @@ function ff_content_show($column, $post_id) {
 }
 
 // trie les élements par leurs ordre dans le Custom post type slider
-function ff_change_slides_order ($query) {
-    global $post_type, $pagenow;
-    if ($pagenow == 'edit.php' && $post_type == 'ff_slider') {
-        $query->query_vars['orderby'] = 'menu_order';
-        $query->query_vars['order'] = 'asc';
-    }
+// function ff_change_slides_order ($query) {
+//     global $post_type, $pagenow;
+//     if ($pagenow == 'edit.php' && $post_type == 'ff_slider') {
+//         $query->query_vars['orderby'] = 'menu_order';
+//         $query->query_vars['order'] = 'asc';
+//     }
+// }
+// add_action( 'pre_get_posts', 'ff_change_slides_order');
+
+// Permet de trier par la column order par ordre croissant ou decroissant dans le cpt slider
+add_filter("manage_edit-ff_slider_sortable_columns", "my_sortable_cake_column");
+function my_sortable_cake_column($columns) {
+$columns["ff_slider_image_order"] = "menu_order";
+return $columns;
 }
-add_action( 'pre_get_posts', 'ff_change_slides_order');

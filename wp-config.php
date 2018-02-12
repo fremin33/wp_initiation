@@ -19,7 +19,7 @@
 
 // ** Réglages MySQL - Votre hébergeur doit vous fournir ces informations. ** //
 /** Nom de la base de données de WordPress. */
-define('DB_NAME', 'wp_initiation');
+define('DB_NAME', 'initiationWordpress');
 
 /** Utilisateur de la base de données MySQL. */
 define('DB_USER', 'root');
@@ -37,6 +37,11 @@ define('DB_CHARSET', 'utf8mb4');
   * N’y touchez que si vous savez ce que vous faites.
   */
 define('DB_COLLATE', '');
+
+/*
+ *Supprime la demande de connection en ftp
+ */
+define('FS_METHOD', 'direct');
 
 /**#@+
  * Clés uniques d’authentification et salage.

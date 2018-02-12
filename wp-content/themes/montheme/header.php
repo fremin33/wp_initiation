@@ -66,6 +66,7 @@
                 </div><!-- /col-xs-4 -->
                 <div class="col-xs-8">
                     <h1>Coucou tous le monde</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam quod odio repudiandae error ipsam veniam ullam consectetur autem quo eveniet, cupiditate praesentium a ratione, obcaecati id, deleniti qui nostrum facilis!</p>
                 </div><!-- /col-xs-8 -->
             </div><!-- /row -->
         </div><!-- /jumbotron -->
